@@ -1,0 +1,203 @@
+/*
+ * Project detail view: the native <dialog>, its ::backdrop and the open /
+ * close transitions. This file is imported by ProjectDialog.tsx, so it is
+ * fetched together with the detail view, the first time one is opened.
+ *
+ * Colours come from the design tokens in styles/index.css. Rules live in the
+ * `components` cascade layer, which keeps Tailwind utilities able to override them.
+ */
+
+@layer components {
+  /* ----------------------------------------------------------------- Panel */
+
+  .projects-dialog {
+    --projects-dialog-max-height: min(90vh, 60rem);
+    /* Read by ::backdrop below; the fallback there covers browsers where ::backdrop does not inherit. */
+    --projects-scrim: color-mix(in oklab, var(--canvas) 76%, transparent);
+
+    /* Centred panel. Set explicitly so it keeps its place while it fades out. */
+    position: fixed;
+    inset: 0;
+    width: min(48rem, calc(100vw - 2.5rem));
+    max-width: none;
+    height: fit-content;
+    max-height: var(--projects-dialog-max-height);
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: 1rem;
+    background-color: var(--card);
+    color: var(--ink);
+    box-shadow: var(--shadow-elevated-value);
+
+    /* Closed state: where the entry starts and the exit ends. */
+    opacity: 0;
+    transition: opacity 0.24s ease-out;
+  }
+
+  @supports (height: 100dvh) {
+    .projects-dialog {
+      --projects-dialog-max-height: min(90dvh, 60rem);
+    }
+  }
+
+  [data-theme='light'] .projects-dialog {
+    --projects-scrim: color-mix(in oklab, var(--ink) 48%, transparent);
+  }
+
+  .projects-dialog[open] {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .projects-dialog[open] {
+      opacity: 0;
+    }
+  }
+
+  /* Header, scrolling body and footer stack inside the panel. */
+  .projects-dialog-panel {
+    display: flex;
+    flex-direction: column;
+    /* The dialog's limit, less its border. */
+    max-height: calc(var(--projects-dialog-max-height) - 2px);
+  }
+
+  .projects-dialog-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  /* -------------------------------------------------------------- Backdrop */
+
+  .projects-dialog::backdrop {
+    background-color: var(--projects-scrim, rgb(3 7 18 / 0.72));
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.24s ease-out;
+  }
+
+  .projects-dialog[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .projects-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* ----------------------------------------------- Full-height sheet (phones) */
+
+  @media (max-width: 39.9375rem) {
+    .projects-dialog {
+      width: auto;
+      height: auto;
+      max-height: none;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .projects-dialog-panel {
+      height: 100%;
+      max-height: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------- Motion */
+
+  /* Movement is an enhancement: visitors who prefer reduced motion get the fade only. */
+  @media (prefers-reduced-motion: no-preference) {
+    .projects-dialog {
+      transform: translate3d(0, 16px, 0) scale(0.985);
+      transition:
+        opacity 0.24s ease-out,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .projects-dialog[open] {
+      transform: none;
+    }
+
+    @starting-style {
+      .projects-dialog[open] {
+        transform: translate3d(0, 16px, 0) scale(0.985);
+      }
+    }
+
+    /* Content settles in each time a project is shown, including previous / next. */
+    .projects-dialog-body {
+      animation: projects-dialog-content 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @media (max-width: 39.9375rem) {
+      .projects-dialog {
+        transform: translate3d(0, 28px, 0);
+      }
+
+      @starting-style {
+        .projects-dialog[open] {
+          transform: translate3d(0, 28px, 0);
+        }
+      }
+    }
+  }
+
+  @keyframes projects-dialog-content {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+  }
+
+  /*
+   * Exit transition. A closing dialog normally disappears at once; where the
+   * browser can keep it in the top layer for the length of a transition
+   * (`overlay`), it fades out instead. Other browsers simply close it.
+   */
+  @supports (overlay: auto) {
+    .projects-dialog {
+      transition:
+        opacity 0.18s ease-in,
+        transform 0.18s ease-in,
+        overlay 0.18s allow-discrete,
+        display 0.18s allow-discrete;
+    }
+
+    .projects-dialog[open] {
+      transition:
+        opacity 0.24s ease-out,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        overlay 0.3s allow-discrete,
+        display 0.3s allow-discrete;
+    }
+
+    .projects-dialog::backdrop {
+      transition:
+        opacity 0.18s ease-in,
+        overlay 0.18s allow-discrete,
+        display 0.18s allow-discrete;
+    }
+
+    .projects-dialog[open]::backdrop {
+      transition:
+        opacity 0.24s ease-out,
+        overlay 0.24s allow-discrete,
+        display 0.24s allow-discrete;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The global reduced-motion rule does not reach ::backdrop. */
+    .projects-dialog::backdrop {
+      transition-duration: 0.01ms;
+    }
+  }
+}

@@ -1,0 +1,128 @@
+import type { SkillsContent } from '@/types/content'
+
+/**
+ * Skills are listed without proficiency percentages on purpose. Where the
+ * depth of knowledge is limited, a short `note` says so (e.g. "Basic").
+ */
+export const skills: SkillsContent = {
+  eyebrow: 'Expertise',
+  heading: 'Technical Skills & Expertise',
+  description:
+    'The domain knowledge, testing disciplines, and delivery tools I work with across quality assurance, business analysis, and project management.',
+  categories: [
+    {
+      id: 'insurance-domain',
+      title: 'Insurance Domain',
+      summary: 'P&C insurance platforms and business lines I work with.',
+      icon: 'umbrella',
+      skills: [
+        { name: 'Guidewire PolicyCenter' },
+        { name: 'InsuranceNow' },
+        { name: 'Consumer Portal' },
+        { name: 'BillingCenter', note: 'Basic' },
+        { name: 'ClaimCenter', note: 'Basic' },
+        { name: 'Property & Casualty Insurance' },
+        { name: 'Eight Lines of Business' },
+      ],
+    },
+    {
+      id: 'manual-testing',
+      title: 'Manual Testing',
+      summary: 'Structured testing across the software testing life cycle.',
+      icon: 'clipboard-check',
+      skills: [
+        { name: 'Functional Testing' },
+        { name: 'Regression Testing' },
+        { name: 'Integration Testing' },
+        { name: 'UAT' },
+        { name: 'Test Planning' },
+        { name: 'Test Strategy' },
+        { name: 'Test Case Design' },
+        { name: 'Defect Management' },
+        { name: 'STLC' },
+        { name: 'Defect Life Cycle' },
+      ],
+    },
+    {
+      id: 'automation-testing',
+      title: 'Automation Testing',
+      summary: 'UI and API automation built on maintainable framework patterns.',
+      icon: 'bot',
+      skills: [
+        { name: 'Selenium' },
+        { name: 'Java' },
+        { name: 'TestNG' },
+        { name: 'Rest Assured' },
+        { name: 'Playwright' },
+        { name: 'Robot Framework' },
+        { name: 'Page Object Model' },
+        { name: 'Data-Driven Testing' },
+        { name: 'UI Automation' },
+        { name: 'API Automation' },
+      ],
+    },
+    {
+      id: 'api-testing',
+      title: 'API Testing',
+      summary: 'Validating REST services at the request and response level.',
+      icon: 'braces',
+      skills: [
+        { name: 'Postman' },
+        { name: 'REST API Validation' },
+        { name: 'Rest Assured' },
+        { name: 'API Request and Response Validation' },
+      ],
+    },
+    {
+      id: 'business-analysis',
+      title: 'Business Analysis',
+      summary: 'Turning business needs into clear, documented requirements.',
+      icon: 'file-search',
+      skills: [
+        { name: 'Requirement Analysis' },
+        { name: 'Functional Analysis' },
+        { name: 'Workflow Analysis' },
+        { name: 'FRD Documentation' },
+        { name: 'Business Process Understanding' },
+        { name: 'Application Analysis' },
+        { name: 'Gap Analysis' },
+        { name: 'Documentation Management' },
+      ],
+    },
+    {
+      id: 'project-management',
+      title: 'Project Management',
+      summary: 'Agile coordination, tracking, and collaboration tooling.',
+      icon: 'kanban',
+      skills: [
+        { name: 'PMO Activities' },
+        { name: 'Agile / Scrum' },
+        { name: 'Sprint Planning' },
+        { name: 'Daily Stand-ups' },
+        { name: 'Retrospectives' },
+        { name: 'Rally' },
+        { name: 'Jira' },
+        { name: 'Confluence' },
+        { name: 'SharePoint' },
+        { name: 'Task Tracking' },
+        { name: 'Project Coordination' },
+      ],
+    },
+    {
+      id: 'development-ai-tools',
+      title: 'Development & AI Tools',
+      summary: 'Everyday engineering tools and AI-assisted workflows.',
+      icon: 'code',
+      skills: [
+        { name: 'Git' },
+        { name: 'GitHub' },
+        { name: 'VS Code' },
+        { name: 'Eclipse' },
+        { name: 'Node.js' },
+        { name: 'Gemini' },
+        { name: 'AI Coding Assistants' },
+        { name: 'Excel' },
+      ],
+    },
+  ],
+}

@@ -1,0 +1,366 @@
+@import 'tailwindcss';
+
+/* The QA scripts are not part of the site: keep Tailwind from scanning them for class names. */
+@source not '../../qa';
+
+/* ==========================================================================
+   Design tokens
+   --------------------------------------------------------------------------
+   Every colour used in the UI is a semantic token that changes with the
+   theme. Components should use the Tailwind utilities generated from these
+   (bg-canvas, text-ink, border-line, text-primary-soft, ...) and never
+   hard-coded palette values, so light and dark mode stay in sync.
+   ========================================================================== */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+@custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));
+
+@theme {
+  /* Typography */
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Manrope Variable', 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Colours: replace Tailwind's default palette with the theme-aware tokens */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-canvas: var(--canvas); /* primary page background */
+  --color-surface: var(--surface); /* secondary / alternating background */
+  --color-card: var(--card); /* card background */
+  --color-glass: var(--glass); /* translucent surface, pair with backdrop-blur */
+
+  --color-ink: var(--ink); /* primary text */
+  --color-muted: var(--muted); /* secondary text */
+  --color-faint: var(--faint); /* tertiary text: captions, meta */
+
+  --color-line: var(--line); /* hairline borders */
+  --color-line-strong: var(--line-strong); /* emphasised borders */
+
+  --color-primary: var(--primary); /* brand blue: fills, borders, icons, glows */
+  --color-primary-soft: var(--primary-soft); /* brand blue for small text (AA contrast) */
+  --color-primary-strong: var(--primary-strong); /* solid fill behind white text */
+  --color-secondary: var(--secondary); /* brand violet: fills, borders, icons */
+  --color-secondary-soft: var(--secondary-soft); /* brand violet for small text */
+  --color-secondary-strong: var(--secondary-strong); /* solid fill behind white text */
+  --color-highlight: var(--highlight); /* cyan highlight: safe for text in both themes */
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  /* Elevation */
+  --shadow-card: var(--shadow-card-value);
+  --shadow-elevated: var(--shadow-elevated-value);
+  --shadow-glow: var(--shadow-glow-value);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-float-slow: float 12s ease-in-out infinite;
+  --animate-gradient-pan: gradient-pan 12s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 4s ease-in-out infinite;
+  --animate-spin-slow: spin 28s linear infinite;
+  --animate-dash: dash 2.4s linear infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0);
+    }
+  }
+
+  @keyframes gradient-pan {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Theme values — dark is the default
+   -------------------------------------------------------------------------- */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --canvas: #080d18;
+  --surface: #101827;
+  --card: #141f30;
+  --glass: rgb(20 31 48 / 0.58);
+
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --faint: #7a8aa3;
+
+  --line: rgb(148 163 184 / 0.14);
+  --line-strong: rgb(148 163 184 / 0.28);
+
+  --primary: #3b82f6;
+  --primary-soft: #60a5fa;
+  --primary-strong: #2563eb;
+  --secondary: #8b5cf6;
+  --secondary-soft: #a78bfa;
+  --secondary-strong: #7c3aed;
+  --highlight: #22d3ee;
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  --shadow-card-value: inset 0 1px 0 0 rgb(255 255 255 / 0.04), 0 24px 48px -28px rgb(0 0 0 / 0.7);
+  --shadow-elevated-value:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.06), 0 32px 64px -28px rgb(0 0 0 / 0.8),
+    0 0 0 1px rgb(59 130 246 / 0.08);
+  --shadow-glow-value: 0 12px 40px -12px rgb(59 130 246 / 0.55);
+
+  /* Ambient background lighting */
+  --glow-primary: rgb(59 130 246 / 0.16);
+  --glow-secondary: rgb(139 92 246 / 0.13);
+  --glow-highlight: rgb(34 211 238 / 0.08);
+  --grid-line: rgb(148 163 184 / 0.06);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --canvas: #f7f9fc;
+  --surface: #eef2f8;
+  --card: #ffffff;
+  --glass: rgb(255 255 255 / 0.72);
+
+  --ink: #0b1220;
+  --muted: #475569;
+  --faint: #5b6b82;
+
+  --line: rgb(15 23 42 / 0.1);
+  --line-strong: rgb(15 23 42 / 0.2);
+
+  --primary: #2563eb;
+  --primary-soft: #1d4ed8;
+  --primary-strong: #2563eb;
+  --secondary: #7c3aed;
+  --secondary-soft: #6d28d9;
+  --secondary-strong: #7c3aed;
+  --highlight: #0e7490;
+
+  --success: #047857;
+  --warning: #92400e; /* dark enough for AA contrast on its own 10% tint */
+  --danger: #b91c1c;
+
+  --shadow-card-value: 0 1px 2px rgb(15 23 42 / 0.04), 0 16px 40px -22px rgb(15 23 42 / 0.16);
+  --shadow-elevated-value:
+    0 1px 2px rgb(15 23 42 / 0.05), 0 28px 56px -24px rgb(15 23 42 / 0.22), 0 0 0 1px rgb(37 99 235 / 0.06);
+  --shadow-glow-value: 0 12px 32px -12px rgb(37 99 235 / 0.45);
+
+  --glow-primary: rgb(37 99 235 / 0.1);
+  --glow-secondary: rgb(124 58 237 / 0.08);
+  --glow-highlight: rgb(14 116 144 / 0.06);
+  --grid-line: rgb(15 23 42 / 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+@layer base {
+  html {
+    /* Sticky navbar height: keeps anchored content clear of the header. */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+
+  ::selection {
+    background-color: rgb(59 130 246 / 0.35);
+    color: var(--ink);
+  }
+
+  /* One consistent, clearly visible keyboard focus indicator. */
+  :focus-visible {
+    outline: 2px solid var(--primary-soft);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* Sections receive programmatic focus after in-page navigation. */
+  section:focus,
+  main:focus {
+    outline: none;
+  }
+
+  button,
+  [role='button'],
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reusable utilities
+   -------------------------------------------------------------------------- */
+
+/* Brand gradient text for emphasised words. */
+@utility text-gradient {
+  background-image: linear-gradient(100deg, var(--primary-soft) 0%, var(--secondary-soft) 55%, var(--highlight) 110%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Brand gradient fill for primary buttons and accents (white text is AA on it). */
+@utility bg-brand-gradient {
+  background-image: linear-gradient(120deg, var(--primary-strong) 0%, var(--secondary-strong) 100%);
+}
+
+/* Soft brand tint for icon tiles and highlighted panels. */
+@utility bg-brand-tint {
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--primary) 16%, transparent),
+    color-mix(in oklab, var(--secondary) 12%, transparent)
+  );
+}
+
+/* Small uppercase label that sits above section headings. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--primary-soft);
+
+  &::before {
+    content: '';
+    width: 2rem;
+    height: 1px;
+    flex: none;
+    background-image: linear-gradient(90deg, var(--primary), var(--secondary));
+  }
+}
+
+/* Hairline highlight along the top edge of a card. */
+@utility card-sheen {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    border-radius: inherit;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--primary-soft) 55%, transparent),
+      color-mix(in oklab, var(--secondary-soft) 45%, transparent),
+      transparent
+    );
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Subtle technical grid, faded at the edges. Use on an absolutely positioned layer. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 25%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 25%, transparent 100%);
+}
+
+/* Ambient lighting blobs. Use on an absolutely positioned layer behind content. */
+@utility bg-aurora {
+  background-image:
+    radial-gradient(42rem 30rem at 12% 8%, var(--glow-primary), transparent 65%),
+    radial-gradient(38rem 28rem at 88% 18%, var(--glow-secondary), transparent 65%),
+    radial-gradient(30rem 24rem at 55% 100%, var(--glow-highlight), transparent 70%);
+}
+
+@utility bg-glow-primary {
+  background-image: radial-gradient(closest-side, var(--glow-primary), transparent);
+}
+
+@utility bg-glow-secondary {
+  background-image: radial-gradient(closest-side, var(--glow-secondary), transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion: keep the content, drop the movement
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,433 @@
+/*
+ * Business Analysis & PMO: the delivery process stepper.
+ *
+ * ProcessStepper renders one set of markup (stage tabs, the lines between
+ * them, and one shell holding the detail panels). This file lays it out twice:
+ *
+ *   below 64rem   a vertical stepper: a line down the left with a node per
+ *                 stage, and the shell placed in the row under the selected
+ *                 stage, so that stage opens in place;
+ *   from 64rem    a horizontal track inside one card, with the shell underneath.
+ *
+ * Placement comes from custom properties set by the component:
+ *   --delivery-count      number of stages
+ *   --delivery-segments   number of lines between stages (at least 1)
+ *   --delivery-selected   index of the selected stage, from 0
+ *   --delivery-shell-row  grid row of the shell in the vertical layout
+ *   --delivery-step       time the line takes to cross one segment
+ * and per stage / line: --delivery-index, --delivery-row, --delivery-column and
+ * --delivery-delay (the moment the line reaches that element).
+ *
+ * Colours are the design tokens of styles/index.css, so both themes are
+ * covered. Rules live in the `components` layer: utilities can override them.
+ */
+
+@layer components {
+  /* --------------------------------------------------- Vertical (default) */
+
+  .delivery-stepper {
+    --delivery-node: 2.5rem; /* size of a node */
+    --delivery-node-top: 0.5rem; /* space above the node inside its tab */
+    --delivery-gutter: 3.5rem; /* node + gap: where the text column starts */
+    --delivery-node-surface: var(--card);
+    --delivery-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    /* Two rows per stage: its tab, then room for the shell. */
+    grid-template-rows: repeat(var(--delivery-count), auto auto);
+  }
+
+  /* The tab list covers every row and lends them to its tabs. */
+  .delivery-tablist {
+    display: grid;
+    grid-row: 1 / -1;
+    grid-column: 1;
+    grid-template-rows: subgrid;
+  }
+
+  .delivery-tab {
+    position: relative;
+    z-index: 1;
+    grid-row: var(--delivery-row);
+  }
+
+  /* ---- Node */
+
+  .delivery-node {
+    position: relative;
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--delivery-node);
+    height: var(--delivery-node);
+    border: 1px solid var(--line-strong);
+    border-radius: 0.75rem;
+    background-color: var(--delivery-node-surface);
+    color: var(--muted);
+    transition:
+      border-color 0.3s ease var(--delivery-delay, 0ms),
+      background-color 0.3s ease var(--delivery-delay, 0ms),
+      color 0.3s ease var(--delivery-delay, 0ms),
+      box-shadow 0.3s ease var(--delivery-delay, 0ms),
+      scale 0.15s ease;
+  }
+
+  /* Brand fill of the selected node. A separate layer, so it can fade in. */
+  .delivery-node::before {
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background-image: linear-gradient(120deg, var(--primary-strong) 0%, var(--secondary-strong) 100%);
+    content: '';
+    opacity: 0;
+    transition: opacity 0.3s ease var(--delivery-delay, 0ms);
+  }
+
+  /* Hover ring. Separate from the state colours, which may still be waiting for the line. */
+  .delivery-node::after {
+    position: absolute;
+    inset: -1px;
+    border: 1px solid var(--primary-soft);
+    border-radius: inherit;
+    content: '';
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .delivery-tab[data-state='complete'] .delivery-node {
+    border-color: color-mix(in oklab, var(--primary) 45%, transparent);
+    background-color: color-mix(in oklab, var(--primary) 14%, var(--delivery-node-surface));
+    color: var(--primary-soft);
+  }
+
+  .delivery-tab[data-state='current'] .delivery-node {
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow:
+      0 0 0 4px color-mix(in oklab, var(--primary) 18%, transparent),
+      var(--shadow-glow-value);
+  }
+
+  .delivery-tab[data-state='current'] .delivery-node::before {
+    opacity: 1;
+  }
+
+  .delivery-tab:not([data-state='current']):hover .delivery-node::after {
+    opacity: 0.85;
+  }
+
+  .delivery-tab:active .delivery-node {
+    scale: 0.95;
+  }
+
+  /* ---- Label and chevron */
+
+  .delivery-label {
+    color: var(--muted);
+    transition: color 0.25s ease;
+  }
+
+  .delivery-tab[data-state='complete'] .delivery-label {
+    color: color-mix(in oklab, var(--ink) 84%, transparent);
+  }
+
+  .delivery-tab[data-state='current'] .delivery-label,
+  .delivery-tab:hover .delivery-label {
+    color: var(--ink);
+  }
+
+  .delivery-chevron {
+    color: var(--faint);
+    transition:
+      color 0.25s ease,
+      opacity 0.25s ease;
+  }
+
+  .delivery-tab:hover .delivery-chevron {
+    color: var(--ink);
+  }
+
+  /* The open stage cannot be closed, so it shows no chevron. */
+  .delivery-tab[data-state='current'] .delivery-chevron {
+    opacity: 0;
+  }
+
+  /* ---- Line between a node and the next one */
+
+  .delivery-connector {
+    position: relative;
+    /* Its own tab row plus the shell row below: exactly the distance to the next node. */
+    grid-row: var(--delivery-row) / span 2;
+    grid-column: 1;
+    justify-self: start;
+    width: 2px;
+    margin-left: calc(var(--delivery-node) / 2 - 1px);
+    /* Dashed while the stage ahead has not been reached. */
+    background-image: linear-gradient(to bottom, var(--line-strong) 50%, transparent 50%);
+    background-size: 100% 8px;
+    pointer-events: none;
+    transform: translateY(calc(var(--delivery-node-top) + var(--delivery-node) / 2));
+  }
+
+  .delivery-connector::after {
+    position: absolute;
+    inset: 0;
+    background-color: var(--primary);
+    content: '';
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--delivery-step, 0ms) linear var(--delivery-delay, 0ms);
+  }
+
+  .delivery-connector[data-filled='true']::after {
+    transform: none;
+  }
+
+  /* ---- Shell: the card that holds the detail panels and the buttons */
+
+  .delivery-shell {
+    grid-row: var(--delivery-shell-row);
+    grid-column: 1;
+    min-width: 0;
+    margin: 0.25rem 0 1rem var(--delivery-gutter);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background-color: var(--card);
+    box-shadow: var(--shadow-card-value);
+  }
+
+  .delivery-panel {
+    display: none;
+  }
+
+  .delivery-panel[data-selected='true'] {
+    display: block;
+    animation: delivery-panel-in 0.45s var(--delivery-ease) both;
+  }
+
+  @keyframes delivery-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+
+  /* Decoration that only belongs to the horizontal track. */
+  .delivery-backdrop,
+  .delivery-spot,
+  .delivery-caret {
+    display: none;
+  }
+
+  /* Without subgrid the shell cannot sit between two tabs: show it under the list instead. */
+  @supports not (grid-template-rows: subgrid) {
+    @media (max-width: 63.999rem) {
+      .delivery-stepper {
+        grid-template-rows: none;
+      }
+
+      .delivery-tablist {
+        display: block;
+        grid-row: 1;
+      }
+
+      .delivery-connector {
+        display: none;
+      }
+
+      .delivery-shell {
+        grid-row: 2;
+        margin: 1rem 0 0;
+      }
+    }
+  }
+
+  /* ----------------------------------------------- Horizontal (from 64rem) */
+
+  @media (min-width: 64rem) {
+    .delivery-stepper {
+      --delivery-node: 2.75rem;
+      --delivery-pad: 1.5rem; /* horizontal padding of the card */
+      --delivery-track-top: 2.5rem; /* space above the tabs */
+      --delivery-node-surface: var(--surface);
+      /* Vertical centre of the nodes, measured from the top of the card. */
+      --delivery-axis: calc(var(--delivery-track-top) + var(--delivery-node-top) + var(--delivery-node) / 2);
+
+      grid-template-rows: auto auto;
+      grid-template-columns: repeat(var(--delivery-count), minmax(0, 1fr));
+      padding-inline: var(--delivery-pad);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background-color: var(--card);
+      box-shadow: var(--shadow-card-value);
+    }
+
+    .delivery-tablist {
+      grid-row: 1;
+      grid-column: 1 / -1;
+      grid-template-rows: none;
+      grid-template-columns: repeat(var(--delivery-count), minmax(0, 1fr));
+      padding-block: var(--delivery-track-top) 1.75rem;
+    }
+
+    .delivery-tab {
+      grid-row: auto;
+    }
+
+    .delivery-connector {
+      grid-row: 1;
+      grid-column: var(--delivery-column);
+      align-self: start;
+      justify-self: stretch;
+      width: auto;
+      height: 2px;
+      margin-top: calc(var(--delivery-axis) - 1px);
+      margin-left: 0;
+      background-image: linear-gradient(to right, var(--line-strong) 50%, transparent 50%);
+      background-size: 8px 100%;
+      /* From the centre of this column to the centre of the next. */
+      transform: translateX(50%);
+    }
+
+    /* One gradient shared by every segment, so the filled line reads as a single stroke. */
+    .delivery-connector::after {
+      background-color: transparent;
+      background-image: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
+      background-position: calc(var(--delivery-index) / max(1, var(--delivery-segments) - 1) * 100%) 0;
+      background-size: calc(var(--delivery-segments) * 100%) 100%;
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .delivery-backdrop {
+      display: block;
+      grid-row: 1;
+      grid-column: 1 / -1;
+      margin-inline: calc(var(--delivery-pad) * -1);
+      background-image:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-position: center top;
+      background-size: 2.5rem 2.5rem;
+      -webkit-mask-image: linear-gradient(to bottom, #000 10%, transparent 95%);
+      mask-image: linear-gradient(to bottom, #000 10%, transparent 95%);
+    }
+
+    .delivery-spot {
+      display: block;
+      grid-row: 1;
+      grid-column: 1 / -1;
+      margin-inline: calc(var(--delivery-pad) * -1);
+      padding-inline: var(--delivery-pad);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    /* As wide as one column, moved along by whole columns. */
+    .delivery-spot > span {
+      position: relative;
+      display: block;
+      width: calc(100% / var(--delivery-count));
+      height: 100%;
+      transform: translateX(calc(var(--delivery-selected) * 100%));
+      transition: transform 0.7s var(--delivery-ease);
+    }
+
+    .delivery-spot > span::before {
+      position: absolute;
+      top: var(--delivery-axis);
+      left: 50%;
+      width: 18rem;
+      height: 18rem;
+      background-image: radial-gradient(closest-side, var(--glow-primary), transparent);
+      content: '';
+      translate: -50% -50%;
+    }
+
+    .delivery-caret {
+      position: relative;
+      z-index: 1;
+      display: block;
+      grid-row: 2;
+      grid-column: 1;
+      align-self: start;
+      height: 0;
+      pointer-events: none;
+      transform: translateX(calc(var(--delivery-selected) * 100%));
+      transition: transform 0.55s var(--delivery-ease);
+    }
+
+    .delivery-caret::before {
+      position: absolute;
+      top: -0.375rem;
+      left: 50%;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-top: 1px solid var(--line-strong);
+      border-left: 1px solid var(--line-strong);
+      background-color: var(--card);
+      content: '';
+      rotate: 45deg;
+      translate: -50% 0;
+    }
+
+    .delivery-shell {
+      grid-row: 2;
+      grid-column: 1 / -1;
+      margin: 0 calc(var(--delivery-pad) * -1);
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      background-color: transparent;
+      box-shadow: none;
+    }
+
+    /* All panels share one cell: the height never changes, and they can cross-fade. */
+    .delivery-panels {
+      display: grid;
+    }
+
+    .delivery-panel,
+    .delivery-panel[data-selected='true'] {
+      display: block;
+      grid-area: 1 / 1;
+      animation: none;
+    }
+
+    .delivery-panel {
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(8px);
+      transition:
+        opacity 0.16s ease,
+        transform 0s linear 0.16s,
+        visibility 0s linear 0.16s;
+    }
+
+    .delivery-panel[data-selected='true'] {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity 0.4s ease 0.12s,
+        transform 0.5s var(--delivery-ease) 0.12s,
+        visibility 0s linear 0s;
+    }
+  }
+
+  /* --------------------------------------------------------- Reduced motion */
+
+  /* The global rule shortens every duration; the waits are removed here. */
+  @media (prefers-reduced-motion: reduce) {
+    .delivery-stepper *,
+    .delivery-stepper *::before,
+    .delivery-stepper *::after {
+      transition-delay: 0s !important;
+      animation-delay: 0s !important;
+    }
+  }
+}

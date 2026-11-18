@@ -1,0 +1,231 @@
+/*
+ * Technical Skills: the category index.
+ *
+ * One set of buttons, two presentations:
+ *  - below `lg`, a single scrolling line of buttons;
+ *  - from `lg`, a row of equal cells inside a tray.
+ *
+ * The index is part of the page until a category is spotlighted. While one
+ * is, it stays pinned below the navigation bar, so the visitor can switch
+ * category or clear the spotlight without scrolling back.
+ *
+ * Colours come from the design tokens in styles/index.css. Each button sets
+ * --skills-accent and --skills-accent-text (see SkillIndex.tsx). The rules
+ * live in the `components` cascade layer, so Tailwind utilities still win.
+ */
+
+@layer components {
+  .skills-index {
+    --skills-gutter: 1.25rem; /* the page gutter: the line of buttons bleeds to the screen edges */
+
+    position: relative;
+    z-index: 30;
+    margin-inline: calc(var(--skills-gutter) * -1);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  @media (width >= 40rem) {
+    .skills-index {
+      --skills-gutter: 2rem;
+    }
+  }
+
+  .skills-index[data-engaged='true'] {
+    position: sticky;
+    top: 4rem; /* height of the navigation bar below `lg` */
+    border-bottom-color: var(--line);
+    background-color: color-mix(in oklab, var(--surface) 88%, transparent);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+
+  .skills-index-track {
+    position: relative; /* offset parent of the buttons: see centreInTrack() */
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.625rem var(--skills-gutter);
+    scroll-padding-inline: var(--skills-gutter);
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    /* Buttons fade out at the edges, which hints that the line scrolls. */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--skills-gutter),
+      #000 calc(100% - var(--skills-gutter)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--skills-gutter),
+      #000 calc(100% - var(--skills-gutter)),
+      transparent
+    );
+  }
+
+  .skills-index-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .skills-index-item {
+    --skills-accent: var(--muted);
+    --skills-accent-text: var(--ink);
+
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    background-color: var(--card);
+    color: var(--muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .skills-index-item:hover {
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+
+  .skills-index-item[aria-pressed='true'] {
+    border-color: color-mix(in oklab, var(--skills-accent) 50%, transparent);
+    background-color: color-mix(in oklab, var(--skills-accent) 12%, var(--card));
+    color: var(--ink);
+  }
+
+  .skills-index-icon {
+    flex: none;
+    color: var(--faint);
+    transition: color 0.2s ease;
+  }
+
+  .skills-index-item:hover .skills-index-icon {
+    color: var(--muted);
+  }
+
+  .skills-index-item[aria-pressed='true'] .skills-index-icon {
+    color: var(--skills-accent-text);
+  }
+
+  .skills-index-count {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--faint);
+    transition: color 0.2s ease;
+  }
+
+  .skills-index-item[aria-pressed='true'] .skills-index-count {
+    color: var(--skills-accent-text);
+  }
+
+  /* ------------------------------------------------ From `lg`: cells in a tray */
+
+  @media (width >= 64rem) {
+    .skills-index {
+      margin-inline: 0;
+      border-bottom: 0;
+    }
+
+    .skills-index[data-engaged='true'] {
+      top: 5.25rem; /* navigation bar (4.5rem) plus a little air */
+      background-color: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+
+    .skills-index-track {
+      display: grid;
+      grid-template-columns: repeat(var(--skills-index-columns, 8), minmax(0, 1fr));
+      gap: 0.375rem;
+      overflow: visible;
+      padding: 0.375rem;
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background-color: color-mix(in oklab, var(--card) 55%, transparent);
+      -webkit-mask-image: none;
+      mask-image: none;
+      transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+
+    /* Pinned: the tray floats above the cards. */
+    .skills-index[data-engaged='true'] .skills-index-track {
+      border-color: var(--line-strong);
+      background-color: color-mix(in oklab, var(--card) 86%, transparent);
+      box-shadow: var(--shadow-elevated-value);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+    }
+
+    .skills-index-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-content: start;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 0;
+      padding: 0.6875rem 0.75rem 0.75rem;
+      border-color: transparent;
+      border-radius: 0.75rem;
+      background-color: transparent;
+      text-align: left;
+      white-space: normal;
+    }
+
+    /* "All categories" takes the spare cells when the buttons do not fill the last row. */
+    .skills-index-item:first-child {
+      grid-column: span var(--skills-index-lead, 1);
+    }
+
+    .skills-index-item:hover {
+      border-color: transparent;
+      background-color: color-mix(in oklab, var(--ink) 5%, transparent);
+    }
+
+    .skills-index-item[aria-pressed='true'] {
+      border-color: color-mix(in oklab, var(--skills-accent) 45%, transparent);
+      background-color: color-mix(in oklab, var(--skills-accent) 12%, var(--card));
+    }
+
+    .skills-index-icon {
+      grid-area: 1 / 1;
+    }
+
+    .skills-index-count {
+      grid-area: 1 / 2;
+      justify-self: end;
+    }
+
+    .skills-index-unit {
+      font-family: var(--font-sans);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .skills-index-label {
+      grid-area: 2 / 1 / auto / -1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
+    }
+  }
+}

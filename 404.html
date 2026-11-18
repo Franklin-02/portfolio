@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Page not found | Franklin Selvaraj M.</title>
+    <meta name="description" content="The page you were looking for could not be found." />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#080D18" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+
+    <!-- Apply the saved theme before first paint (dark is the default). -->
+    <script>
+      ;(function () {
+        var theme = 'dark'
+        try {
+          if (localStorage.getItem('fsm-theme') === 'light') theme = 'light'
+        } catch (error) {
+          /* storage unavailable: keep the default */
+        }
+        document.documentElement.setAttribute('data-theme', theme)
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="max-width: 40rem; margin: 4rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif; color: #f8fafc">
+        <h1>Page not found</h1>
+        <p>The page you were looking for could not be found.</p>
+        <p><a style="color: #60a5fa" href="/">Go to the home page</a></p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/not-found.tsx"></script>
+  </body>
+</html>

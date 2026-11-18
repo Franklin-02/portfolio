@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FSM monogram | icon source</title>
+    <!--
+      Source for the PNG favicons in public/favicon/. Geometry follows public/favicon/favicon.svg:
+      a square with a 15/64 corner radius (23.4%), the brand gradient #2563EB -> #7C3AED running
+      from the top-left to the bottom-right corner, and white extra-bold "FSM" in Manrope with
+      tight tracking.
+
+      The monogram is drawn on a canvas several times larger than the output and reduced with an
+      exact area average, so every letter keeps its true position (no whole-pixel glyph snapping)
+      and the anti-aliasing is as accurate as the pixel grid allows.
+
+      Query parameters:
+        size      output size in pixels (the viewport must be the same size)        default 512
+        shape     rounded | square (square = full bleed, no transparency)            default rounded
+        cap       cap height in output pixels; default 0.375 x size x cap-height (as in the SVG)
+        tracking  letter spacing in em                                               default -0.05
+        weight    font weight                                                        default 800
+        top       y of the top of the capitals in output pixels; default centres them
+        dx        horizontal nudge in output pixels                                  default 0
+        snap      1 = put the left edge of F and of M on a whole pixel               default 0
+        fit       1 = also make M a whole number of pixels wide (small sizes only)   default 0
+        share     with snap: share of the spare space that goes between F and S       default: the font's own
+        mode      ss (supersampled canvas) | native (inline SVG text, reference)     default ss
+
+      Shipped settings:
+        favicon-32x32.png     size=32  cap=9   top=11  tracking=-0.02 snap=1 fit=1 share=0.5
+        apple-touch-icon.png  size=180 cap=48  top=66  snap=1 shape=square
+        icon-192.png          size=192 cap=52  top=70  snap=1
+        icon-512.png          size=512 cap=138 top=187 snap=1
+    -->
+    <style>
+      @font-face {
+        font-family: 'Manrope Variable';
+        font-style: normal;
+        font-display: block;
+        font-weight: 200 800;
+        src: url('../../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2')
+          format('woff2-variations');
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      canvas,
+      svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+      }
+
+      /* Keeps the web font in use by the document, so the render tool can confirm it loaded. */
+      #probe {
+        position: absolute;
+        left: 0;
+        top: 0;
+        font: 800 4px 'Manrope Variable';
+        color: transparent;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <span id="probe" aria-hidden="true">FSM</span>
+    <script>
+      window.__ready = (async function () {
+        var params = new URLSearchParams(location.search)
+        var number = function (key, fallback) {
+          var value = params.get(key)
+          return value === null || value === '' || isNaN(Number(value)) ? fallback : Number(value)
+        }
+        var round3 = function (value) {
+          return Math.round(value * 1000) / 1000
+        }
+
+        var FAMILY = '"Manrope Variable"'
+        var LETTERS = ['F', 'S', 'M']
+        var size = number('size', 512)
+        var square = params.get('shape') === 'square'
+        var weight = number('weight', 800)
+        var tracking = number('tracking', -0.05)
+        var mode = params.get('mode') === 'native' ? 'native' : 'ss'
+        var snap = params.get('snap') === '1'
+        var fit = params.get('fit') === '1'
+
+        await document.fonts.load(weight + ' 100px ' + FAMILY, 'FSM')
+        await document.fonts.ready
+
+        /* ---- Glyph metrics in em, measured large (outlines scale linearly) ---- */
+        var REF = 1000
+        var probe = document.createElement('canvas').getContext('2d')
+        probe.font = weight + ' ' + REF + 'px ' + FAMILY
+        probe.textBaseline = 'alphabetic'
+        probe.textAlign = 'left'
+        probe.fontKerning = 'normal'
+        var measure = function (text) {
+          var m = probe.measureText(text)
+          return {
+            advance: m.width / REF,
+            inkLeft: -m.actualBoundingBoxLeft / REF,
+            inkRight: m.actualBoundingBoxRight / REF,
+            ascent: m.actualBoundingBoxAscent / REF,
+          }
+        }
+        var glyphs = LETTERS.map(measure)
+        var capHeightEm = glyphs[0].ascent // F has a flat top and sits on the baseline
+        var kern = [
+          measure('FS').advance - glyphs[0].advance - glyphs[1].advance,
+          measure('SM').advance - glyphs[1].advance - glyphs[2].advance,
+        ]
+
+        /* ---- Layout in output pixels ---- */
+        var cap = number('cap', size * (24 / 64) * capHeightEm)
+        var fontSize = cap / capHeightEm
+        var radius = square ? 0 : (size * 15) / 64
+        var capTop = number('top', (size - cap) / 2)
+        var baseline = capTop + cap
+
+        // Ink width of each letter and the clear space between neighbouring letters.
+        var width = glyphs.map(function (glyph) {
+          return (glyph.inkRight - glyph.inkLeft) * fontSize
+        })
+        var gap = [0, 1].map(function (index) {
+          var a = glyphs[index]
+          var b = glyphs[index + 1]
+          return (a.advance - a.inkRight + kern[index] + tracking + b.inkLeft) * fontSize
+        })
+
+        // Optional: stretch M by a hair so both of its stems land on whole pixels.
+        var stretch = [1, 1, 1]
+        if (fit) {
+          stretch[2] = Math.max(1, Math.round(width[2])) / width[2]
+          width[2] *= stretch[2]
+        }
+
+        // Left ink edge of each letter, with the whole word centred.
+        var total = width[0] + gap[0] + width[1] + gap[1] + width[2]
+        var left = [(size - total) / 2 + number('dx', 0)]
+        left[1] = left[0] + width[0] + gap[0]
+        left[2] = left[1] + width[1] + gap[1]
+        if (snap) {
+          left[0] = Math.round(left[0])
+          left[2] = Math.round(left[2])
+          // S shares the remaining space in the proportion the font gives its two gaps,
+          // unless ?share= says otherwise (0.5 = equal clear space on both sides, for tiny sizes).
+          var free = left[2] - (left[0] + width[0]) - width[1]
+          var share = number('share', gap[0] > 0 && gap[1] > 0 ? gap[0] / (gap[0] + gap[1]) : 0.5)
+          left[1] = left[0] + width[0] + free * share
+        }
+
+        var report = {
+          mode: mode,
+          size: size,
+          fontSize: round3(fontSize),
+          capHeight: round3(cap),
+          capTop: round3(capTop),
+          baseline: round3(baseline),
+          letterLeft: left.map(round3),
+          letterWidth: width.map(round3),
+          clearSpace: [round3(left[1] - left[0] - width[0]), round3(left[2] - left[1] - width[1])],
+          inkLeft: round3(left[0]),
+          inkRight: round3(left[2] + width[2]),
+          stretchM: round3(stretch[2]),
+          radius: round3(radius),
+        }
+        window.__report = function () {
+          return report
+        }
+
+        // Pen origin of each letter: the ink edge minus the (stretched) left side bearing.
+        var origin = left.map(function (edge, index) {
+          return edge - glyphs[index].inkLeft * fontSize * stretch[index]
+        })
+
+        if (mode === 'native') {
+          /* ---- Reference path: the browser rasterises inline SVG text at the output size ---- */
+          var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+          svg.setAttribute('width', size)
+          svg.setAttribute('height', size)
+          svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size)
+          svg.innerHTML =
+            '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+            '<stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs>' +
+            '<rect width="' + size + '" height="' + size + '" rx="' + radius + '" fill="url(#g)"/>' +
+            '<text x="' + origin.join(' ') + '" y="' + baseline + '" fill="#fff" font-family=\'' + FAMILY + '\' font-size="' + fontSize +
+            '" font-weight="' + weight + '" text-rendering="geometricPrecision">FSM</text>'
+          document.body.appendChild(svg)
+          return
+        }
+
+        /* ---- Supersampled canvas, reduced with an exact area average ---- */
+        var factor = Math.max(4, Math.floor(1536 / size))
+        var big = document.createElement('canvas')
+        big.width = big.height = size * factor
+        var ctx = big.getContext('2d', { willReadFrequently: true })
+        ctx.scale(factor, factor)
+
+        var gradient = ctx.createLinearGradient(0, 0, size, size)
+        gradient.addColorStop(0, '#2563EB')
+        gradient.addColorStop(1, '#7C3AED')
+        ctx.fillStyle = gradient
+        ctx.beginPath()
+        if (square) ctx.rect(0, 0, size, size)
+        else ctx.roundRect(0, 0, size, size, radius)
+        ctx.fill()
+
+        ctx.fillStyle = '#FFFFFF'
+        ctx.font = weight + ' ' + fontSize + 'px ' + FAMILY
+        ctx.textBaseline = 'alphabetic'
+        ctx.textAlign = 'left'
+        ctx.fontKerning = 'none'
+        LETTERS.forEach(function (letter, index) {
+          ctx.save()
+          ctx.translate(origin[index], baseline)
+          ctx.scale(stretch[index], 1)
+          ctx.fillText(letter, 0, 0)
+          ctx.restore()
+        })
+
+        var source = ctx.getImageData(0, 0, big.width, big.height).data
+        var canvas = document.createElement('canvas')
+        canvas.width = canvas.height = size
+        canvas.style.width = canvas.style.height = size + 'px'
+        var target = canvas.getContext('2d')
+        var image = target.createImageData(size, size)
+        var samples = factor * factor
+        for (var py = 0; py < size; py++) {
+          for (var px = 0; px < size; px++) {
+            var r = 0
+            var g = 0
+            var b = 0
+            var a = 0
+            for (var sy = 0; sy < factor; sy++) {
+              var at = ((py * factor + sy) * big.width + px * factor) * 4
+              for (var sx = 0; sx < factor; sx++) {
+                var alpha = source[at + 3]
+                r += source[at] * alpha
+                g += source[at + 1] * alpha
+                b += source[at + 2] * alpha
+                a += alpha
+                at += 4
+              }
+            }
+            if (a > 0) {
+              var to = (py * size + px) * 4
+              image.data[to] = Math.round(r / a)
+              image.data[to + 1] = Math.round(g / a)
+              image.data[to + 2] = Math.round(b / a)
+              image.data[to + 3] = Math.round(a / samples)
+            }
+          }
+        }
+        target.putImageData(image, 0, 0)
+        document.body.appendChild(canvas)
+        report.supersample = factor
+      })()
+    </script>
+  </body>
+</html>

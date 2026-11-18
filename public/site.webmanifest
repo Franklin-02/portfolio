@@ -1,0 +1,15 @@
+{
+  "name": "Franklin Selvaraj M. | Portfolio",
+  "short_name": "Franklin S. M.",
+  "description": "Professional portfolio of Franklin Selvaraj M., Senior QA Tester / PMO.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#080D18",
+  "theme_color": "#080D18",
+  "icons": [
+    { "src": "favicon/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "favicon/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "favicon/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
