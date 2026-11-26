@@ -24,8 +24,6 @@ interface ArticleCoverProps {
   index: number
   palette: SeriesPalette
   seriesTitle: string
-  /** Total number of posts planned for the series. */
-  plannedCount: number
   className?: string
 }
 
@@ -39,7 +37,7 @@ interface ArticleCoverProps {
  * Purely decorative, so it is hidden from assistive technology: everything it
  * shows is also stated in the text of the card.
  */
-export function ArticleCover({ article, index, palette, seriesTitle, plannedCount, className }: ArticleCoverProps) {
+export function ArticleCover({ article, index, palette, seriesTitle, className }: ArticleCoverProps) {
   const id = `articles-cover-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   const stopCount = article.topics.length
 
@@ -51,7 +49,6 @@ export function ArticleCover({ article, index, palette, seriesTitle, plannedCoun
 
   const inProgress = article.status === 'current'
   const lastStop = route.stops.length - 1
-  const numberWidth = Math.max(2, article.number.length)
 
   const style = {
     '--articles-accent': palette.accent,
@@ -181,9 +178,6 @@ export function ArticleCover({ article, index, palette, seriesTitle, plannedCoun
 
       <p className="articles-cover-head">
         <span className="articles-cover-series">{seriesTitle}</span>
-        <span className="shrink-0 tabular-nums">
-          {article.number} / {String(plannedCount).padStart(numberWidth, '0')}
-        </span>
       </p>
 
       <span className="articles-cover-number font-display font-extrabold tabular-nums">{article.number}</span>

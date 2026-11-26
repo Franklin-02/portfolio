@@ -1,7 +1,7 @@
 import * as m from 'motion/react-m'
 import { ArticleCard } from '@/components/sections/articles/ArticleCard'
 import { FeaturedArticle } from '@/components/sections/articles/FeaturedArticle'
-import { getSeriesProgress, splitSeries } from '@/components/sections/articles/series'
+import { splitSeries } from '@/components/sections/articles/series'
 import { SeriesPanel } from '@/components/sections/articles/SeriesPanel'
 import { Reveal } from '@/components/ui/Reveal'
 import { Section } from '@/components/ui/Section'
@@ -22,9 +22,11 @@ function ArticlesBackdrop() {
 }
 
 /**
- * The LinkedIn content series: the current topic as a featured card, the other
- * articles beside it, and a panel with the progress of the whole series and
- * the link to follow it.
+ * The LinkedIn content series: one topic as a featured card, the other topics
+ * beside it, and a panel that describes the series and links to LinkedIn.
+ *
+ * The cards are a selection of topics. No post count or progress bar is shown,
+ * so the section stays correct as more posts are published on LinkedIn.
  *
  * Everything is rendered from src/data/articles.ts. An article shows a
  * "Read on LinkedIn" link only once its `url` is filled in there.
@@ -32,7 +34,6 @@ function ArticlesBackdrop() {
 export function Articles() {
   const { series } = articles
   const { featured, others } = splitSeries(articles.articles)
-  const progress = getSeriesProgress(articles.articles, series.plannedCount)
 
   return (
     <Section id="insights" tone="surface" decoration={<ArticlesBackdrop />}>
@@ -46,12 +47,7 @@ export function Articles() {
       <div className="mt-12 grid gap-5 lg:mt-16 lg:gap-6 xl:grid-cols-12">
         {featured ? (
           <Reveal className="xl:col-span-5">
-            <FeaturedArticle
-              article={featured.article}
-              index={featured.index}
-              seriesTitle={series.title}
-              plannedCount={series.plannedCount}
-            />
+            <FeaturedArticle article={featured.article} index={featured.index} seriesTitle={series.title} />
           </Reveal>
         ) : null}
 
@@ -76,7 +72,6 @@ export function Articles() {
         <SeriesPanel
           title={series.title}
           description={series.description}
-          progress={progress}
           followLabel={articles.followLabel}
           followUrl={profile.linkedin.url}
         />

@@ -3,8 +3,14 @@ import type { ArticlesContent } from '@/types/content'
 /**
  * LinkedIn educational content series.
  *
- * To link a post, add its real LinkedIn address as `url` on the article.
- * While `url` is undefined the card shows no link, so nothing fake is published.
+ * The cards below are a SELECTION of topics from the series, not a full list of
+ * posts. The section shows no "x of y posts" count and no progress bar, so it
+ * stays correct however many posts are published on LinkedIn afterwards.
+ *
+ * To feature another topic, add an entry to `articles` (the last entry gets the
+ * large card). To link a post, add its real LinkedIn address as `url` on the
+ * article. While `url` is undefined the card shows no link, so nothing fake is
+ * published.
  */
 export const articles: ArticlesContent = {
   eyebrow: 'LinkedIn Content',
@@ -13,8 +19,8 @@ export const articles: ArticlesContent = {
     'An educational content series on LinkedIn that walks through Guidewire InsuranceSuite concepts one topic at a time.',
   series: {
     title: 'Guidewire Educational Series',
-    description: 'A planned series of 30 educational posts on Guidewire and insurance technology.',
-    plannedCount: 30,
+    description:
+      'An ongoing series of educational posts on Guidewire and insurance technology. The topics shown here are a selection: every post, including the newest, is on LinkedIn.',
   },
   articles: [
     {
@@ -54,7 +60,7 @@ export const articles: ArticlesContent = {
       title: 'PolicyCenter Data Model',
       description:
         'The core entities behind PolicyCenter, such as accounts, policies, and policy periods, and how they relate to each other.',
-      status: 'current',
+      status: 'published',
       topics: ['Accounts', 'Policies', 'Policy periods', 'Entity relationships'],
     },
   ],

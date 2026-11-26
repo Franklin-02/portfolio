@@ -70,7 +70,7 @@
     overflow: visible;
   }
 
-  /* Series name and position, set like the running head of a printed series. */
+  /* Series name, set like the running head of a printed series. */
   .articles-cover-head {
     position: absolute;
     top: 1.1rem;
@@ -89,7 +89,7 @@
   }
 
   .articles-cover-series {
-    display: none;
+    display: block;
     min-width: 0;
     margin-right: auto;
     overflow: hidden;
@@ -112,13 +112,6 @@
     .articles-cover-number {
       color: transparent;
       -webkit-text-stroke: 1.25px color-mix(in oklab, var(--articles-accent) 68%, var(--ink));
-    }
-  }
-
-  /* Wide enough for the series name next to the position. */
-  @container articles-cover (min-width: 25rem) {
-    .articles-cover-series {
-      display: block;
     }
   }
 

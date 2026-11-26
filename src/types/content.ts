@@ -184,7 +184,7 @@ export interface Engagement {
   highlights: EngagementHighlight[]
   responsibilities: string[]
   /** Which original illustration accompanies the engagement. */
-  visual: 'policy-lifecycle' | 'api-validation' | 'application-analysis'
+  visual: 'policy-lifecycle' | 'forms-validation' | 'application-analysis'
 }
 
 export interface ExperienceContent {
@@ -405,11 +405,10 @@ export interface ArticlesContent {
   eyebrow: string
   heading: string
   description: string
+  /** The series as a whole. No post counts: they go out of date every time a new post is published. */
   series: {
     title: string
     description: string
-    /** Total number of posts planned for the series. */
-    plannedCount: number
   }
   articles: Article[]
   /** Label for the profile link, e.g. "Follow the series on LinkedIn". */

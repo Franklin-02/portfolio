@@ -78,18 +78,18 @@ const REQUIRED = {
     'Identified and tracked 300+ defects using Rally.',
     'Performed regression testing on policy lifecycle, underwriting, and product management workflows.',
     'Validated consumer portal forms and input data.',
+    'Performed form validation.',
     'Supported performance testing.',
     'Collaborated with developers, business analysts, and project managers.',
     'Participated in 80+ Agile ceremonies.',
     'Mentored and trained new team members.',
     'InsuranceNow (SPIC & AFR)',
-    'REST APIs',
     'Developed test plans and automation scripts.',
-    'Validated REST APIs using Postman and Rest Assured.',
     'Designed scenarios across multiple P&C insurance lines of business.',
     'Executed functional and regression tests.',
     'Validated application forms and customer workflows.',
-    'Managed defects through Rally.',
+    'Tracked and managed defects using Mantis.',
+    'Mantis',
     'Worked with cross-functional teams.',
     'Participated in Agile delivery activities.',
     'Supported testing process improvements.',
@@ -159,7 +159,7 @@ const REQUIRED = {
     'API Automation',
     'API Testing',
     'Postman',
-    'REST API Validation',
+    'Forms validation',
     'API Request and Response Validation',
     'Requirement Analysis',
     'Functional Analysis',
@@ -190,9 +190,11 @@ const REQUIRED = {
     'AI Coding Assistants',
     'Excel',
   ],
-  // Featured projects as corrected by the owner after the first build: Orion moved to the
-  // experience timeline (current project), and the two concept entries were removed.
+  // Projects as corrected by the owner after the first build: Orion moved to the experience
+  // timeline (current project), the two concept entries were removed, and the two that remain
+  // are both the owner's freelance projects (the section is headed "Freelance Projects").
   Projects: [
+    'Freelance Projects',
     'Billing Software',
     'Freelance Project',
     'Delivered',
@@ -201,7 +203,7 @@ const REQUIRED = {
     'Invoice workflows',
     'Business-oriented user interface',
     'Ecommerce Application',
-    'Independent Web Application',
+    'built as a freelance project',
     'Demo UI',
     'Premium homepage',
     'Product listings',
@@ -274,7 +276,8 @@ const REQUIRED = {
     'ClaimCenter Life Cycle',
     'InsuranceSuite Architecture',
     'PolicyCenter Data Model',
-    '30',
+    'Guidewire Educational Series',
+    'Follow the series on LinkedIn',
   ],
   Contact: [
     "Let's Connect and Build Something Meaningful.",
@@ -387,6 +390,13 @@ const forbidden = await page.evaluate(() => {
   for (const gone of ['family location tracker', 'insurance qa automation', 'cloud-based billing']) {
     if (text.includes(gone)) found.push('removed project still on the page: ' + gone)
   }
+  // Owner's correction: neither employer project involved API validation.
+  const experienceText = (document.getElementById('experience')?.textContent ?? '').toLowerCase()
+  for (const wrong of ['rest api', 'postman', 'rest assured', 'api validation']) {
+    if (experienceText.includes(wrong)) found.push('experience section still mentions "' + wrong + '"')
+  }
+  const insuranceText = (document.getElementById('insurance-technology')?.textContent ?? '').toLowerCase()
+  if (insuranceText.includes('rest api')) found.push('insurance technology section still lists REST API validation')
   for (const word of ['audited', 'independently verified', 'verified by', 'lorem ipsum', 'your-domain', 'example.com']) {
     if (text.includes(word)) found.push(`forbidden wording on the page: "${word}"`)
   }
@@ -401,6 +411,17 @@ const forbidden = await page.evaluate(() => {
     if (skills.querySelector('[role="progressbar"], progress, meter')) found.push('skills section contains a proficiency bar')
     if (/\d\s?%/.test(skills.textContent)) found.push('skills section contains a percentage')
   }
+  // The owner asked for the series progress bar and its counts to go: more posts are published on
+  // LinkedIn all the time, so any "x of y posts" figure on the site would be out of date.
+  const insights = document.getElementById('insights')
+  if (insights) {
+    const text = insights.textContent
+    if (/series progress|posts planned|current topic/i.test(text)) found.push('LinkedIn section still shows series progress wording')
+    if (/\d+\s*(?:\/|of)\s*\d+/i.test(text)) found.push('LinkedIn section still shows an "x of y" post count')
+    if (insights.querySelector('[role="progressbar"], progress, meter, [aria-label^="Series progress" i]')) {
+      found.push('LinkedIn section still contains a series progress bar')
+    }
+  }
   const education = document.getElementById('education')
   if (education && education.querySelector('a[href]')) found.push('education section contains a link (no verification links were supplied)')
   const images = [...document.querySelectorAll('main img')].map((img) => img.getAttribute('src'))
@@ -412,7 +433,7 @@ problems.push(...forbidden)
 // Every project dialog must state its status honestly and offer no invented links.
 const dialogChecks = [
   ['Billing Software', ['freelance', 'delivered', 'desktop shortcut', 'desktop application']],
-  ['Ecommerce Application', ['demo', 'not a live store', 'node.js']],
+  ['Ecommerce Application', ['freelance', 'demo', 'not a live store', 'node.js']],
 ]
 for (const [title, fragments] of dialogChecks) {
   const text = dialogTexts.find((entry) => entry.title === normalise(title))?.text

@@ -15,16 +15,14 @@ interface FeaturedArticleProps {
   /** Position of the article in the content file: selects the route on its cover. */
   index: number
   seriesTitle: string
-  /** Total number of posts planned for the series. */
-  plannedCount: number
 }
 
 /**
- * The large card for the article the series is on right now. It lays itself
+ * The large card for the featured article of the series. It lays itself
  * out from its own width (container queries): cover on top when narrow, cover
  * at the side when wide. In a stretched grid cell the cover takes the spare height.
  */
-export function FeaturedArticle({ article, index, seriesTitle, plannedCount }: FeaturedArticleProps) {
+export function FeaturedArticle({ article, index, seriesTitle }: FeaturedArticleProps) {
   const titleId = articleTitleId(article)
   const url = articleUrl(article)
 
@@ -40,7 +38,6 @@ export function FeaturedArticle({ article, index, seriesTitle, plannedCount }: F
           index={index}
           palette={palette}
           seriesTitle={seriesTitle}
-          plannedCount={plannedCount}
           className="min-h-48 flex-1 border-b border-line @2xl/featured:w-[42%] @2xl/featured:flex-none @2xl/featured:border-r @2xl/featured:border-b-0"
         />
 

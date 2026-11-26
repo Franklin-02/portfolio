@@ -32,7 +32,7 @@ lives in plain data files, so it can be updated without touching the components.
 
 - **Sections:** Hero with key statistics, About, Professional Experience (timeline), Technical
   Skills, Insurance Technology (with an original InsuranceSuite diagram), Business Analysis &
-  PMO (interactive delivery process), Featured Projects, Key Achievements, Certifications &
+  PMO (interactive delivery process), Freelance Projects, Key Achievements, Certifications &
   Education, LinkedIn content series, Contact.
 - **Navigation:** fixed navigation bar with an active-section indicator, smooth scrolling, a
   mobile menu, and a scroll-to-top button.
@@ -135,7 +135,7 @@ no component needs to be edited.
 | `skills.ts` | Skill categories and skills |
 | `insurance.ts` | Insurance technology products and the InsuranceSuite diagram labels |
 | `delivery.ts` | Business Analysis & PMO areas and the delivery process steps |
-| `projects.ts` | Featured projects |
+| `projects.ts` | Freelance projects |
 | `achievements.ts` | Key achievement figures |
 | `education.ts` | Certifications and education |
 | `articles.ts` | LinkedIn content series |
@@ -173,6 +173,18 @@ to a PDF in `public/resume/`.
 That is all: the build detects the file and the buttons become real download links. Until
 the file exists they show a "Resume · Coming soon" placeholder, so visitors are never offered
 a broken download.
+
+### Editing the resume itself
+
+The PDF currently in `public/resume/` was generated from `qa/resume/Franklin-Selvaraj-M-Resume.html`:
+a two-page, single-column layout with real text, so applicant tracking systems can read it.
+To change it, edit the text in that HTML file and render the PDF again:
+
+```bash
+node qa/tools/render-pdf.mjs --in qa/resume/Franklin-Selvaraj-M-Resume.html --out public/resume/Franklin-Selvaraj-M-Resume.pdf
+```
+
+You can also replace the PDF with any resume of your own, as long as it keeps the same file name.
 
 To use a different filename, set `VITE_RESUME_FILE` (see
 [Environment variables](#environment-variables)) to the exact name of the file in

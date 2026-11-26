@@ -30,7 +30,7 @@ function readProjectParam(): string | undefined {
 }
 
 /**
- * Featured Projects: the showcase grid and the project detail view.
+ * Freelance Projects: the showcase grid and the project detail view.
  *
  * Everything is generated from `projects` in src/data/projects.ts. The open
  * project lives in the URL (`?project=<slug>`, see useProjectParam), which

@@ -14,7 +14,7 @@ import type { Engagement, IconName } from '@/types/content'
 /** Icon on the timeline node of an engagement, matching its illustration. */
 const engagementIcons: Record<Engagement['visual'], IconName> = {
   'policy-lifecycle': 'repeat',
-  'api-validation': 'braces',
+  'forms-validation': 'clipboard-check',
   'application-analysis': 'scan-search',
 }
 

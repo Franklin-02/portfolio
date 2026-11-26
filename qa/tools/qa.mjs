@@ -36,7 +36,7 @@ const EXPECTED = {
   email: 'Techyfrank9750@gmail.com',
   tel: 'tel:+918754128805',
   linkedin: 'https://www.linkedin.com/in/franklin-selvaraj-m/',
-  // Featured projects in display order (Orion is employer work and lives in the experience timeline).
+  // Freelance projects in display order (Orion is employer work and lives in the experience timeline).
   projectSlugs: ['billing-software', 'ecommerce-application'],
   firstProjectTitle: /Billing Software/,
   engagements: ['Western Reserve Group (WRG)', 'InsuranceNow (SPIC & AFR)', 'Orion Application Analysis & Delivery'],
@@ -118,6 +118,28 @@ async function settle(page) {
     await page.waitForTimeout(110)
   }
   return last
+}
+
+/**
+ * Waits (up to `timeout` ms) for a smooth scroll to bring a section to the top of the
+ * viewport. Returns how long it took, or -1 if it never arrived. A slow machine only
+ * makes this take longer; a scroll that really stops short still fails the check after it.
+ */
+async function arrive(page, id, timeout = 8000) {
+  const started = Date.now()
+  while (Date.now() - started < timeout) {
+    const there = await page.evaluate((sectionId) => {
+      if (sectionId === 'home') return window.scrollY < 5
+      const element = document.getElementById(sectionId)
+      if (!element) return false
+      const top = element.getBoundingClientRect().top
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 6
+      return atBottom || (top >= -4 && top <= 130)
+    }, id)
+    if (there) return Date.now() - started
+    await page.waitForTimeout(120)
+  }
+  return -1
 }
 
 async function sectionTop(page, id) {
@@ -262,11 +284,14 @@ if (run('desktop')) {
     expect(JSON.stringify(labels) === JSON.stringify(EXPECTED.nav), `got ${labels.join(', ')}`)
   })
 
+  const scrollTimes = []
   for (let index = EXPECTED.nav.length - 1; index >= 0; index--) {
     const label = EXPECTED.nav[index]
     const target = EXPECTED.navTargets[index]
     await check('desktop', `nav "${label}" scrolls to #${target} and becomes active`, async () => {
       await navLinks.filter({ hasText: new RegExp(`^\\s*${label}\\s*$`) }).first().click()
+      const took = await arrive(page, target)
+      scrollTimes.push(`${label} ${took}ms`)
       await settle(page)
       await page.waitForTimeout(300)
       if (target === 'home') {
@@ -283,6 +308,8 @@ if (run('desktop')) {
     })
   }
 
+  console.log(`INFO  [desktop] time for each navigation scroll to arrive: ${scrollTimes.join(', ')}`)
+
   await check('desktop', 'active indicator follows the secondary sections (expertise and education groups)', async () => {
     const mapping = { 'insurance-technology': 'Expertise', delivery: 'Expertise', insights: 'Education' }
     for (const [id, label] of Object.entries(mapping)) {
@@ -298,6 +325,7 @@ if (run('desktop')) {
       await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
       await settle(page)
       await page.locator('#home').getByRole('link', { name: label, exact: true }).click()
+      await arrive(page, target)
       await settle(page)
       const top = await sectionTop(page, target)
       expect(top !== null && ((await atPageBottom(page)) || (top >= -4 && top <= 130)), `section top at ${top}px`)
@@ -488,7 +516,7 @@ if (run('projects')) {
     const count = await detailButtons.count()
     expect(count === EXPECTED.projectSlugs.length, `found ${count}, expected ${EXPECTED.projectSlugs.length}`)
   })
-  await check('projects', 'employer work is in the experience timeline, not in Featured Projects', async () => {
+  await check('projects', 'employer work is in the experience timeline, not in Freelance Projects', async () => {
     const info = await page.evaluate(() => ({
       timeline: [...document.querySelectorAll('#experience article h3')].map((heading) => heading.textContent.trim()),
       projects: document.getElementById('projects').textContent,
@@ -500,7 +528,7 @@ if (run('projects')) {
     const entries = info.timeline.slice(-EXPECTED.engagements.length)
     expect(JSON.stringify(entries) === JSON.stringify(EXPECTED.engagements), `timeline entries: ${info.timeline.join(' | ')}`)
     expect(info.timeline.length === EXPECTED.engagements.length + 1, `expected the company card plus ${EXPECTED.engagements.length} projects, found ${info.timeline.length} cards`)
-    expect(!/Orion/.test(info.projects), 'Orion still appears in Featured Projects')
+    expect(!/Orion/.test(info.projects), 'Orion still appears in Freelance Projects')
     expect(info.current.length === 1 && /Orion/.test(info.current[0] ?? ''), `marked as current: ${info.current.join(' | ') || 'none'}`)
   })
   await check('projects', 'no invented repository or demo links', async () => {

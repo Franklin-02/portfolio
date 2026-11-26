@@ -27,7 +27,7 @@ export const insurance: InsuranceContent = {
       levelTone: 'hands-on',
       points: [
         'Insurance application workflows',
-        'REST API validation',
+        'Forms validation',
         'Consumer portal',
         'Multi-line-of-business testing',
       ],

@@ -1,12 +1,12 @@
 import type { ComponentType } from 'react'
-import { ApiValidationVisual } from '@/components/sections/experience/ApiValidationVisual'
 import { ApplicationAnalysisVisual } from '@/components/sections/experience/ApplicationAnalysisVisual'
+import { FormsValidationVisual } from '@/components/sections/experience/FormsValidationVisual'
 import { PolicyLifecycleVisual } from '@/components/sections/experience/PolicyLifecycleVisual'
 import type { Engagement } from '@/types/content'
 
 const visuals: Record<Engagement['visual'], ComponentType<{ className?: string }>> = {
   'policy-lifecycle': PolicyLifecycleVisual,
-  'api-validation': ApiValidationVisual,
+  'forms-validation': FormsValidationVisual,
   'application-analysis': ApplicationAnalysisVisual,
 }
 

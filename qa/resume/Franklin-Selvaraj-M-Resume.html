@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Franklin Selvaraj M. - Senior QA Tester / PMO - Resume</title>
+    <meta name="author" content="Franklin Selvaraj M." />
+    <!--
+      SOURCE OF THE RESUME PDF (the PDF is the deliverable; this file only produces it).
+      Edit the text here, then render it again from the project folder:
+
+        node qa/tools/render-pdf.mjs --in qa/resume/Franklin-Selvaraj-M-Resume.html --out public/resume/Franklin-Selvaraj-M-Resume.pdf
+
+      Format: built to be shortlisted quickly.
+        - One column of real text, no tables, images, icons or colour, so applicant tracking
+          systems (ATS) parse it cleanly and it prints well.
+        - Standard section names (Summary, Skills, Professional Experience, Freelance Projects, Education).
+        - The strongest figures sit in the top third of page one, with the numbers in bold.
+        - Reverse-chronological experience, current project first.
+      Every fact comes from the owner. Do not add figures, employers, dates or tools the owner has not supplied.
+    -->
+    <style>
+      @page {
+        size: A4;
+        margin: 12.7mm 15mm 12.7mm 15mm;
+      }
+
+      :root {
+        --ink: #000000;
+        --soft: #333333;
+        --rule: #7a7a7a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: Calibri, Arial, Helvetica, sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.38;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      b,
+      strong {
+        font-weight: 700;
+      }
+
+      /* ---------------------------------------------------------- Header */
+
+      header {
+        padding-bottom: 6pt;
+        border-bottom: 1.4pt solid var(--ink);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22pt;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: 0.6pt;
+        text-transform: uppercase;
+      }
+
+      .title {
+        margin: 3pt 0 0;
+        font-size: 11.5pt;
+        font-weight: 700;
+      }
+
+      .contact {
+        margin: 3pt 0 0;
+        font-size: 10.2pt;
+        color: var(--soft);
+      }
+
+      .sep {
+        margin: 0 5pt;
+        color: var(--rule);
+      }
+
+      /* -------------------------------------------------------- Sections */
+
+      section {
+        margin-top: 10pt;
+      }
+
+      h2 {
+        margin: 0 0 3.5pt;
+        padding-bottom: 1.5pt;
+        border-bottom: 0.7pt solid var(--rule);
+        font-size: 11pt;
+        font-weight: 700;
+        letter-spacing: 0.9pt;
+        text-transform: uppercase;
+        break-after: avoid;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      ul {
+        margin: 2pt 0 0;
+        padding-left: 13pt;
+      }
+
+      li {
+        margin: 0 0 1.3pt;
+        padding-left: 1pt;
+      }
+
+      /* Achievements: two columns of short bullets */
+      .columns {
+        columns: 2;
+        column-gap: 24pt;
+      }
+
+      .columns li {
+        break-inside: avoid;
+      }
+
+      /* Skills: label followed by its list, one group per line */
+      .skills p {
+        margin-bottom: 1.8pt;
+      }
+
+      /* Keeps a hyphenated term on one line, so text extraction never drops its hyphen. */
+      .keep {
+        white-space: nowrap;
+      }
+
+      /* ------------------------------------------------------ Experience */
+
+      .employer {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12pt;
+        font-size: 11.2pt;
+        font-weight: 700;
+      }
+
+      .employer .when {
+        flex: none;
+        font-size: 10.5pt;
+      }
+
+      .role {
+        font-weight: 700;
+        font-style: italic;
+      }
+
+      .project {
+        margin-top: 6pt;
+        break-inside: avoid;
+      }
+
+      h3 {
+        margin: 0;
+        font-size: 10.6pt;
+        font-weight: 700;
+      }
+
+      .meta {
+        font-size: 10pt;
+        font-style: italic;
+        color: var(--soft);
+      }
+
+      .entry {
+        break-inside: avoid;
+      }
+
+      .entry + .entry {
+        margin-top: 4pt;
+      }
+
+      .line {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12pt;
+      }
+
+      .line .when {
+        flex: none;
+      }
+
+      .info p + p {
+        margin-top: 2pt;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Franklin Selvaraj M.</h1>
+      <p class="title">
+        Senior QA Tester / PMO<span class="sep">|</span>Quality Assurance<span class="sep">|</span>Business
+        Analysis<span class="sep">|</span>Project Management
+      </p>
+      <p class="contact">
+        Trichy, Tamil Nadu, India<span class="sep">|</span><a href="tel:+918754128805">+91 8754128805</a
+        ><span class="sep">|</span><a href="mailto:Techyfrank9750@gmail.com">Techyfrank9750@gmail.com</a
+        ><span class="sep">|</span
+        ><a href="https://www.linkedin.com/in/franklin-selvaraj-m/">linkedin.com/in/franklin-selvaraj-m</a>
+      </p>
+    </header>
+
+    <section>
+      <h2>Summary</h2>
+      <p>
+        Senior QA Tester / PMO with <b>4+ years</b> of experience in the IT industry, specializing in Quality
+        Assurance, Business Analysis, and Project Management within the Property &amp; Casualty insurance domain.
+        Hands-on experience with <b>Guidewire PolicyCenter</b> and <b>InsuranceNow</b> across functional testing,
+        regression testing, and workflow and forms validation. <b>ISTQB CTFL certified</b> and experienced in the
+        Software Testing Life Cycle, Agile/Scrum methodologies, defect management, and test strategy development.
+        Beyond testing, contributes to application analysis, requirements documentation, project coordination, and
+        delivery activities.
+      </p>
+    </section>
+
+    <section>
+      <h2>Key Achievements</h2>
+      <ul class="columns">
+        <li><b>30%</b> improvement in test coverage</li>
+        <li><b>50%</b> reduction in defect turnaround time</li>
+        <li><b>10%</b> reduction in test cycle time</li>
+        <li><b>20%</b> increase in customer satisfaction</li>
+        <li><b>400+</b> manual test cases executed per release cycle</li>
+        <li><b>300+</b> defects identified and tracked</li>
+        <li><b>8</b> P&amp;C lines of business across Ohio and Indiana</li>
+        <li><b>80+</b> Agile ceremonies</li>
+      </ul>
+    </section>
+
+    <section class="skills">
+      <h2>Skills</h2>
+      <p>
+        <b>Insurance Domain:</b> Guidewire PolicyCenter, InsuranceNow, Consumer Portal, Property &amp; Casualty
+        Insurance (eight lines of business); BillingCenter and ClaimCenter (basic).
+      </p>
+      <p>
+        <b>Manual Testing:</b> Functional, Regression, Integration, and UAT testing; Test Planning; Test Strategy;
+        Test Case Design; Defect Management; STLC; Defect Life Cycle.
+      </p>
+      <p>
+        <b>Automation Testing:</b> Selenium, Java, TestNG, Playwright, Robot Framework, Rest Assured; Page Object
+        Model; <span class="keep">Data-Driven Testing</span>; UI and API automation.
+      </p>
+      <p><b>API Testing:</b> Postman, Rest Assured, REST API validation, API request and response validation.</p>
+      <p>
+        <b>Business Analysis:</b> Requirement, functional, workflow, and gap analysis; FRD documentation; application
+        analysis; business process understanding; documentation management.
+      </p>
+      <p>
+        <b>Project Management:</b> PMO activities, Agile / Scrum, sprint planning, daily
+        <span class="keep">stand-ups</span>, retrospectives, task tracking, project coordination.
+      </p>
+      <p>
+        <b>Tools:</b> Rally, Jira, Mantis, Confluence, SharePoint, Git, GitHub, VS Code, Eclipse, Node.js, Excel,
+        Gemini, AI coding assistants.
+      </p>
+    </section>
+
+    <section>
+      <h2>Professional Experience</h2>
+      <p class="employer">
+        <span>New Dream Data Systems, India</span>
+        <span class="when">June 2022 – Present</span>
+      </p>
+      <p class="role">Senior QA Tester / PMO</p>
+
+      <div class="project">
+        <h3>Project: Orion Application Analysis &amp; Delivery (current)</h3>
+        <p class="meta">Tools: Jira, Confluence, SharePoint</p>
+        <ul>
+          <li>Analyze the application UI and business workflows to build functional understanding of the system.</li>
+          <li>Prepare requirements documentation and Functional Requirement Documents (FRDs).</li>
+          <li>Carry out <span class="keep">source-code</span>, API, and database analysis.</li>
+          <li>Manage tasks in Jira and support project coordination.</li>
+          <li>Maintain knowledge documentation in Confluence and manage documents in SharePoint.</li>
+          <li>Prepare knowledge transfer (KT) documentation.</li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <h3>Project: InsuranceNow (SPIC &amp; AFR)</h3>
+        <p class="meta">Platforms: InsuranceNow, Consumer Portal. Tools: Mantis</p>
+        <ul>
+          <li>Developed test plans and automation scripts.</li>
+          <li>Designed test scenarios across multiple P&amp;C insurance lines of business.</li>
+          <li>Executed functional and regression tests.</li>
+          <li>Validated application forms and customer workflows.</li>
+          <li>Tracked and managed defects using Mantis.</li>
+          <li>
+            Worked with <span class="keep">cross-functional</span> teams and participated in Agile delivery activities.
+          </li>
+          <li>Supported testing process improvements.</li>
+        </ul>
+      </div>
+
+      <div class="project">
+        <h3>Project: Western Reserve Group (WRG)</h3>
+        <p class="meta">Platforms: Guidewire PolicyCenter, Consumer Portal. Tools: Rally</p>
+        <ul>
+          <li>
+            Developed comprehensive test plans and test strategies covering <b>eight major lines of business</b>
+            across Ohio and Indiana.
+          </li>
+          <li>
+            Analyzed functional and <span class="keep">non-functional</span> requirements and designed detailed manual
+            test cases.
+          </li>
+          <li>Executed <b>400+ manual test cases</b> per release cycle.</li>
+          <li>Identified and tracked <b>300+ defects</b> using Rally.</li>
+          <li>Performed regression testing on policy lifecycle, underwriting, and product management workflows.</li>
+          <li>Validated consumer portal forms and input data, and performed form validation.</li>
+          <li>Supported performance testing.</li>
+          <li>
+            Collaborated with developers, business analysts, and project managers; participated in
+            <b>80+ Agile ceremonies</b>.
+          </li>
+          <li>Mentored and trained new team members.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Freelance Projects</h2>
+      <div class="entry">
+        <h3>Billing Software (desktop application, delivered to users)</h3>
+        <ul>
+          <li>Developed desktop billing software independently as a freelancer and delivered it to its users.</li>
+          <li>
+            Covers billing management and invoice workflows with a
+            <span class="keep">business-oriented</span> user interface; runs on the user's computer with a desktop
+            shortcut.
+          </li>
+        </ul>
+      </div>
+      <div class="entry">
+        <h3>Ecommerce Application (demo UI)</h3>
+        <ul>
+          <li>
+            Built a demo user interface for an ecommerce application as a freelance project, through modular,
+            <span class="keep">AI-assisted</span> development.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Certification</h2>
+      <p><b>ISTQB – Certified Tester Foundation Level (CTFL)</b></p>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      <div class="entry">
+        <p class="line">
+          <span><b>Bachelor of Computer Applications (BCA), Computer Science</b>, Tamilnadu Open University</span>
+          <span class="when">2026</span>
+        </p>
+      </div>
+      <div class="entry">
+        <p class="line">
+          <span><b>Diploma in Computer Engineering</b>, Seshasayee Institute of Technology</span>
+          <span class="when">2022</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="info">
+      <h2>Additional Information</h2>
+      <p>
+        <b>Knowledge sharing:</b> Publishes an ongoing Guidewire educational content series on LinkedIn. Topics
+        include PolicyCenter Life Cycle, BillingCenter Life Cycle, ClaimCenter Life Cycle, InsuranceSuite
+        Architecture, and PolicyCenter Data Model.
+      </p>
+      <p><b>Languages:</b> Tamil (Advanced), English (Intermediate), Hindi (Beginner).</p>
+    </section>
+  </body>
+</html>

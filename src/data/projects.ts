@@ -2,9 +2,9 @@ import type { Project, ProjectsContent } from '@/types/content'
 
 export const projectsContent: ProjectsContent = {
   eyebrow: 'Projects',
-  heading: 'Featured Projects',
+  heading: 'Freelance Projects',
   description:
-    'Independent work alongside my main role. Each entry states its real status: nothing is presented as more finished than it is.',
+    'Projects I took on as a freelancer, separate from my employment. Each entry states its real status: nothing is presented as more finished than it is.',
 }
 
 /**
@@ -18,6 +18,7 @@ export const projectsContent: ProjectsContent = {
  *    are undefined the UI shows `linksNote` instead of a button.
  *  - Keep `status` honest: "In Development", "Concept", "Completed", ...
  *
+ * This section holds the owner's FREELANCE projects only (the heading says so).
  * Work done for the employer (WRG, InsuranceNow, Orion) belongs in
  * src/data/experience.ts, not here.
  */
@@ -53,14 +54,14 @@ export const projects: Project[] = [
     slug: 'ecommerce-application',
     number: '02',
     title: 'Ecommerce Application',
-    category: 'Independent Web Application',
+    category: 'Freelance Project',
     description:
-      'A demo user interface for a premium ecommerce application, developed through modular, AI-assisted development.',
+      'A demo user interface for a premium ecommerce application, built as a freelance project through modular, AI-assisted development.',
     overview: [
-      'An independent build of the user interface for an ecommerce application.',
+      'A freelance project: the demo user interface for an ecommerce application.',
       'It is a demonstration of the interface, not a live store.',
     ],
-    status: { label: 'Demo UI', detail: 'Interface demo, not a live store', tone: 'planned' },
+    status: { label: 'Demo UI', detail: 'Freelance project: interface demo, not a live store', tone: 'planned' },
     // TO CONFIRM WITH THE OWNER: which of these areas the demo actually contains. Once confirmed,
     // list only those and change the label to "Interface areas".
     featuresLabel: 'Interface scope (to be confirmed)',
